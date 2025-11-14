@@ -39,14 +39,12 @@ frontend/  React (Vite) client with Redux Toolkit state management
 5. **Run the backend**
 
    ```bash
-   /backend
    npm run dev
    ```
 
 6. **Run the frontend**
 
    ```bash
-   /backend
     npm run dev
    ```
 
