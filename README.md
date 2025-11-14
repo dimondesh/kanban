@@ -32,25 +32,22 @@ frontend/  React (Vite) client with Redux Toolkit state management
 3. **Environment variables**
 
    Copy the example files and adjust the values:
-
-   ```bash
-   cp backend/.env.example backend/.env
-   cp frontend/.env.example frontend/.env
-   ```
-
+   
    - `backend/.env` expects at least `MONGO_URI` and `PORT`.
    - `frontend/.env` needs `VITE_API_URL`, normally pointing to the backend (e.g., `http://localhost:5000/api`).
 
-4. **Run the backend**
+5. **Run the backend**
 
    ```bash
-   npm run dev --prefix backend
+   /backend
+   npm run dev
    ```
 
-5. **Run the frontend**
+6. **Run the frontend**
 
    ```bash
-   npm run dev --prefix frontend
+   /backend
+    npm run dev
    ```
 
    The Vite dev server prints the local URL (default `http://localhost:5173`).
