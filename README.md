@@ -22,12 +22,14 @@ frontend/  React (Vite) client with Redux Toolkit state management
    ```bash
    cd backend
    npm install
+   ```
 
-   cd frontend
+   ```bash
+    cd frontend
    npm install
    ```
 
-2. **Environment variables**
+3. **Environment variables**
 
    Copy the example files and adjust the values:
 
@@ -39,13 +41,13 @@ frontend/  React (Vite) client with Redux Toolkit state management
    - `backend/.env` expects at least `MONGO_URI` and `PORT`.
    - `frontend/.env` needs `VITE_API_URL`, normally pointing to the backend (e.g., `http://localhost:5000/api`).
 
-3. **Run the backend**
+4. **Run the backend**
 
    ```bash
    npm run dev --prefix backend
    ```
 
-4. **Run the frontend**
+5. **Run the frontend**
 
    ```bash
    npm run dev --prefix frontend
