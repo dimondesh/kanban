@@ -284,7 +284,7 @@ const BoardsPage = () => {
     });
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     setActiveCard(null);
     if (!board) return;
 
@@ -313,13 +313,19 @@ const BoardsPage = () => {
       to: { column: toColumn, index: toIndex },
     };
 
+    const currentBoardId = board.boardId;
     dispatch(localMoveCard(movePayload));
-    dispatch(
-      moveCard({
-        boardId: board.boardId,
-        ...movePayload,
-      })
-    );
+    try {
+      await dispatch(
+        moveCard({
+          boardId: currentBoardId,
+          ...movePayload,
+        })
+      ).unwrap();
+    } catch (err) {
+      console.error("Failed to move card on server", err);
+      dispatch(fetchBoard(currentBoardId));
+    }
   };
 
   const handleDragCancel = () => {
@@ -337,6 +343,17 @@ const BoardsPage = () => {
       dispatch(fetchBoard(boardId));
     }
   };
+
+  const showBoardFallback = Boolean(boardId) && status === "error" && !board;
+  const normalizedError = error?.toLowerCase() ?? "";
+  const isNotFoundError =
+    normalizedError.includes("404") || normalizedError.includes("not found");
+  const fallbackTitle = isNotFoundError
+    ? "Board not found"
+    : "Unable to load board";
+  const fallbackDescription = isNotFoundError
+    ? "The requested board ID does not exist. Double-check the ID or create a new board."
+    : "We couldn't load this board right now. Please try again.";
 
   const isLoading = status === "loading";
   const showInitialLoader = isLoading && !board;
@@ -369,11 +386,11 @@ const BoardsPage = () => {
         </p>
       )}
 
-      {boardId && (
+      {boardId && !showBoardFallback && (
         <div className="bg-zinc-900 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
             <p className="text-sm uppercase text-zinc-400">Board</p>
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-semibold sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl truncate">
               {board?.name ?? "Loading..."}
             </h2>
             <p className="text-xs text-zinc-500 mt-1">
@@ -459,15 +476,36 @@ const BoardsPage = () => {
             {activeCard ? <CardPreview card={activeCard.card} /> : null}
           </DragOverlay>
         </DndContext>
-      ) : (
-        boardId &&
-        !isLoading && (
-          <p className="text-zinc-500">
-            We could not load the board. Double-check the ID or create a new
-            board.
-          </p>
-        )
-      )}
+      ) : showBoardFallback ? (
+        <div className="bg-zinc-900 rounded-xl border border-red-900 p-6 text-center space-y-4">
+          <div className="space-y-2">
+            <p className="text-sm uppercase tracking-[0.3em] text-red-400">
+              {fallbackTitle}
+            </p>
+            <p className="text-lg text-zinc-200">{fallbackDescription}</p>
+            <p className="text-sm text-zinc-500">
+              Board ID:{" "}
+              <span className="font-mono text-zinc-100">{boardId}</span>
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            <button
+              type="button"
+              onClick={handleRefresh}
+              className="border border-zinc-600 px-3 py-1 rounded hover:border-blue-500 disabled:opacity-50"
+            >
+              Try again
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded"
+            >
+              Go to home
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <AddTaskModal
         isOpen={isTaskModalOpen}

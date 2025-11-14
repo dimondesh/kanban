@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import type { Card } from "../types";
 import { useSubmitOnEnter } from "../hooks/useSubmitOnEnter";
+import {
+  CARD_DESCRIPTION_MAX_LENGTH,
+  CARD_TITLE_MAX_LENGTH,
+} from "../constants/cardLimits";
 
 interface EditCardModalProps {
   isOpen: boolean;
@@ -40,8 +44,19 @@ export const EditCardModal: React.FC<EditCardModalProps> = ({
   }, [isOpen, card]);
 
   const handleSubmit = useCallback(async () => {
-    if (!title.trim()) {
+    const normalizedTitle = title.trim();
+    if (!normalizedTitle) {
       setError("Title is required");
+      return;
+    }
+    if (normalizedTitle.length > CARD_TITLE_MAX_LENGTH) {
+      setError(`Title must be at most ${CARD_TITLE_MAX_LENGTH} characters`);
+      return;
+    }
+    if (description.length > CARD_DESCRIPTION_MAX_LENGTH) {
+      setError(
+        `Description must be at most ${CARD_DESCRIPTION_MAX_LENGTH} characters`
+      );
       return;
     }
     if (isSubmitting) return;
@@ -50,7 +65,7 @@ export const EditCardModal: React.FC<EditCardModalProps> = ({
     setError(null);
 
     try {
-      await onSave(title.trim(), description);
+      await onSave(normalizedTitle, description);
       onClose();
     } catch (err) {
       const message =
@@ -89,6 +104,7 @@ export const EditCardModal: React.FC<EditCardModalProps> = ({
               onChange={(e) => setTitle(e.target.value)}
               className="w-full p-2 rounded bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={isSubmitting}
+              maxLength={CARD_TITLE_MAX_LENGTH}
             />
           </div>
           <div>
@@ -98,6 +114,7 @@ export const EditCardModal: React.FC<EditCardModalProps> = ({
               onChange={(e) => setDescription(e.target.value)}
               className="w-full p-2 rounded bg-zinc-700 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={isSubmitting}
+              maxLength={CARD_DESCRIPTION_MAX_LENGTH}
             />
           </div>
           {error && (

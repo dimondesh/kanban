@@ -60,7 +60,11 @@ export const updateBoard = async (req: Request, res: Response) => {
 
 export const deleteBoard = async (req: Request, res: Response) => {
   try {
-    await deleteBoardService(req.params.boardId);
+    const deleted = await deleteBoardService(req.params.boardId);
+    if (!deleted) {
+      res.status(404).json({ message: "Board not found" });
+      return;
+    }
     res.status(204).end();
   } catch (err) {
     sendError(res, err, "Failed to delete board");

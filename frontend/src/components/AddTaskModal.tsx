@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSubmitOnEnter } from "../hooks/useSubmitOnEnter";
+import {
+  CARD_DESCRIPTION_MAX_LENGTH,
+  CARD_TITLE_MAX_LENGTH,
+} from "../constants/cardLimits";
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -29,8 +33,21 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
   }, [isOpen]);
 
   const handleSubmit = useCallback(async () => {
-    if (!title.trim()) {
+    const normalizedTitle = title.trim();
+    if (!normalizedTitle) {
       setError("Title is required");
+      return;
+    }
+    if (normalizedTitle.length > CARD_TITLE_MAX_LENGTH) {
+      setError(`Title must be at most ${CARD_TITLE_MAX_LENGTH} characters`);
+      return;
+    }
+
+    const normalizedDescription = description.trim();
+    if (normalizedDescription.length > CARD_DESCRIPTION_MAX_LENGTH) {
+      setError(
+        `Description must be at most ${CARD_DESCRIPTION_MAX_LENGTH} characters`
+      );
       return;
     }
     if (isSubmitting) return;
@@ -39,7 +56,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     setError(null);
 
     try {
-      await onAdd(title.trim(), description.trim());
+      await onAdd(normalizedTitle, normalizedDescription);
       onClose();
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to add task";
@@ -78,6 +95,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
               className="w-full p-2 rounded bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={isSubmitting}
               autoFocus={true}
+              maxLength={CARD_TITLE_MAX_LENGTH}
             />
           </div>
           <div>
@@ -87,6 +105,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
               onChange={(e) => setDescription(e.target.value)}
               className="w-full p-2 rounded bg-zinc-700 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={isSubmitting}
+              maxLength={CARD_DESCRIPTION_MAX_LENGTH}
             />
           </div>
           {error && (

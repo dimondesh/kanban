@@ -1,8 +1,9 @@
-// src/types/board.ts
+import { HydratedDocument } from "mongoose";
+
 export type ColumnKey = "toDo" | "inProgress" | "done";
 
 export interface Card {
-  id: string; // uuid/nanoid
+  id: string;
   title: string;
   description: string;
   createdAt: string;
@@ -10,10 +11,27 @@ export interface Card {
 }
 
 export interface Board {
-  _id: string; // Mongo ObjectId
-  boardId: string; // уникальный публичный hash (для URL), например nanoid
+  _id: string;
+  boardId: string;
   name: string;
   columns: Record<ColumnKey, Card[]>;
   createdAt: string;
   updatedAt: string;
 }
+
+export interface CardDocument {
+  id: string;
+  title: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BoardDocument {
+  boardId: string;
+  name: string;
+  columns: Record<ColumnKey, CardDocument[]>;
+  createdAt: string;
+  updatedAt: string;
+}
+export type BoardDoc = HydratedDocument<BoardDocument>;

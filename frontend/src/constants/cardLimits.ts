@@ -1,0 +1,2 @@
+export const CARD_TITLE_MAX_LENGTH = 64;
+export const CARD_DESCRIPTION_MAX_LENGTH = 128;

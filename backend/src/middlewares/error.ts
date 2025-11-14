@@ -1,16 +1,14 @@
-// src/middlewares/error.ts
 import { Request, Response, NextFunction } from "express";
 
 export function notFound(req: Request, res: Response) {
-  res
-    .status(404)
-    .json({ message: `Cannot ${req.method} ${req.originalUrl}` });
+  res.status(404).json({ message: `Cannot ${req.method} ${req.originalUrl}` });
 }
 
 export function errorHandler(
   err: Error & Partial<{ statusCode: number }>,
   _req: Request,
   res: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction
 ) {
   const statusCode = err.statusCode ?? 500;

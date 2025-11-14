@@ -1,26 +1,27 @@
 import { Schema, model } from "mongoose";
+import { BoardDocument, CardDocument } from "../types";
 
-const cardSchema = new Schema(
+const cardSchema = new Schema<CardDocument>(
   {
     id: { type: String, required: true },
     title: { type: String, required: true },
-    description: String,
-    createdAt: String,
-    updatedAt: String,
+    description: { type: String, default: "" },
+    createdAt: { type: String, required: true },
+    updatedAt: { type: String, required: true },
   },
   { _id: false }
 );
 
-const boardSchema = new Schema({
+const boardSchema = new Schema<BoardDocument>({
   boardId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   columns: {
-    toDo: [cardSchema],
-    inProgress: [cardSchema],
-    done: [cardSchema],
+    toDo: { type: [cardSchema], default: [] },
+    inProgress: { type: [cardSchema], default: [] },
+    done: { type: [cardSchema], default: [] },
   },
-  createdAt: String,
-  updatedAt: String,
+  createdAt: { type: String, required: true },
+  updatedAt: { type: String, required: true },
 });
 
-export const Board = model("Board", boardSchema);
+export const Board = model<BoardDocument>("Board", boardSchema);
