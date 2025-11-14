@@ -1,14 +1,15 @@
 import type { Request, Response } from "express";
-import type { ColumnKey } from "../types/index.js";
+import type { ColumnKey } from "../types/index";
 import {
   createBoard as createBoardService,
   getBoard as getBoardService,
+  updateBoardName as updateBoardNameService,
   deleteBoard as deleteBoardService,
   addCard as addCardService,
   moveCard as moveCardService,
   updateCard as updateCardService,
   deleteCard as deleteCardService,
-} from "../services/board.service.js";
+} from "../services/board.service";
 
 type KnownError = Error & { statusCode?: number };
 
@@ -42,6 +43,18 @@ export const getBoard = async (req: Request, res: Response) => {
     res.json(board);
   } catch (err) {
     sendError(res, err, "Failed to fetch board");
+  }
+};
+
+export const updateBoard = async (req: Request, res: Response) => {
+  try {
+    const board = await updateBoardNameService(
+      req.params.boardId,
+      req.body?.name
+    );
+    res.json(board);
+  } catch (err) {
+    sendError(res, err, "Failed to update board");
   }
 };
 

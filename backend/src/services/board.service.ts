@@ -1,7 +1,7 @@
 // src/services/board.service.ts
-import { Board } from "../models/board.model.js";
+import { Board } from "../models/board.model";
 import { nanoid } from "nanoid";
-import type { ColumnKey } from "../types/index.js";
+import type { ColumnKey } from "../types/index";
 const now = () => new Date().toISOString();
 const columnOrder: ColumnKey[] = ["toDo", "inProgress", "done"];
 
@@ -27,7 +27,6 @@ const getCardId = (card: any) => {
 
 function findCardPosition(board: any, cardId: string) {
   for (const columnKey of columnOrder) {
-    // @ts-expect-error - Nested subdocuments are not inferred
     const index = board.columns[columnKey].findIndex((card: any) => {
       const currentId = getCardId(card);
       return currentId === cardId;
@@ -55,6 +54,19 @@ export async function createBoard(name: string) {
 
 export async function getBoard(boardId: string) {
   const board = await Board.findOne({ boardId });
+  if (!board) throw httpError("Board not found", 404);
+  return board;
+}
+
+export async function updateBoardName(boardId: string, name: string) {
+  if (!name?.trim()) throw httpError("Name is required", 400);
+
+  const board = await Board.findOneAndUpdate(
+    { boardId },
+    { name: name.trim(), updatedAt: now() },
+    { new: true }
+  );
+
   if (!board) throw httpError("Board not found", 404);
   return board;
 }

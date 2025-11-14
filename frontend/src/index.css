@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.hide-scrollbar {
+  scrollbar-width: none; /* Для Firefox */
+  -ms-overflow-style: none; /* Для IE/Edge */
+}

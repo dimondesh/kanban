@@ -1,10 +1,17 @@
+import { Route, Routes } from "react-router-dom";
+import BoardsPage from "./pages/BoardsPage/BoardsPage";
+import HomePage from "./pages/HomePage/HomePage";
+import { MainLayout } from "./layouts/MainLayout";
+
 function App() {
   return (
     <>
-      <div></div>
-      <p className="shadow-xl font-bold bg-slate-200">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/boards/:boardId?" element={<BoardsPage />} />
+        </Route>
+      </Routes>
     </>
   );
 }
