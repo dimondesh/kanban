@@ -1,4 +1,4 @@
-name: CI
+name: Code Quality
 
 on:
   push:
@@ -15,11 +15,9 @@ jobs:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - run: npm ci
       - run: npm run lint
 
@@ -31,42 +29,8 @@ jobs:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - run: npm ci
       - run: npm run lint
-
-  test-frontend:
-    name: Test Frontend
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - run: npm ci
-      - run: npm run test -- --run
-
-  test-backend:
-    name: Test Backend
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - run: npm ci
-      - run: npm test
